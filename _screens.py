@@ -12,12 +12,12 @@ def create_window(fullscreen=True, size=(1920, 1080), units='deg', screen=0):
     return window
 
 
-def create_fixation_screen(window):
-    return visual.TextStim(win=window, text="+", pos=[0, 0], rgb='black')
+def create_fixation_screen(window, size=1):
+    return visual.TextStim(win=window, text="+", pos=[0, 0], rgb='black', height=size, units='deg')
 
 
-def create_instructions_screen(window, instructions, wrapWidth=30, units='deg'):
-    return visual.TextStim(win=window, text=instructions, wrapWidth=wrapWidth)
+def create_instructions_screen(window, instructions, wrap_width=30, units='deg', text_size=1):
+    return visual.TextStim(win=window, text=instructions, wrapWidth=wrap_width, units=units, height=text_size)
 
 
 def create_stim_screens(window, number_of_target_stim):
@@ -35,5 +35,10 @@ def create_stim_screens(window, number_of_target_stim):
 
 
 def create_circle(window, location=(0, 0), size=1):
-    circle = visual.Circle(window, pos=location, radius=size, fillColor='black', lineColor='black')
+    circle = visual.Circle(window, pos=location, radius=size, fillColor='black', lineColor='black', contrast=-.5)
     return circle
+
+
+def create_rectangle(window, location=(0, 0), width=1, height=1):
+    rectangle = visual.Rect(window, pos=location, width=width, height=height, fillColor='black', lineColor='black')
+    return rectangle

@@ -1,6 +1,7 @@
 from psychopy import core, event
 from psychopy.iohub import launchHubServer, EventConstants
 import _data
+import random
 
 io = launchHubServer(experiment_code='key_evts', psychopy_monitor_name='default')
 keyboard = io.devices.keyboard
@@ -46,7 +47,10 @@ def task(win, exp_info, task_name, fixation, data_file_name=None, inst_screen=No
 
 def toj_presentation(win, clock, stim_1, stim_2, fix=None):
     trial_continue = True
-    circle_location = [0, 20]
+    basket_location = [0, -40]
+    circle_start_location = random.randint(-45, 45)
+    circle_location = [circle_start_location, 40]
+    increment = 0
     while trial_continue:
         if fix:
             fix.draw()
@@ -54,18 +58,31 @@ def toj_presentation(win, clock, stim_1, stim_2, fix=None):
             if event_k.type == EventConstants.KEYBOARD_PRESS:
                 print event_k.key
                 if event_k.key in ['lshift', 'z']:
-                    increment = -0.1  # make it 1% of screen half-width longer
+                    increment = -0.5
                 elif event_k.key in ['rshift', 'slash', '/']:
-                    increment = 0.1  # make 1% shorter
+                    increment = 0.5
                 elif event_k.key in ['escape', 'esc']:
                     quit()
             if event_k.type == EventConstants.KEYBOARD_RELEASE:
                 # the key is no longer being pressed, so stop changing the size:
                 increment = 0
-        circle_location[0] += increment
-        circle_location[1] -= .1
+        basket_location[0] += increment
+        if basket_location[0] > 45:
+            basket_location[0] = 45
+        if basket_location[0] < -45:
+            basket_location[0] = -45
+        circle_location[1] -= .5
+        if circle_location[1] < -40:
+            trial_continue = False
+            #if circle_location[0] > (basket_location[0] - 5) and circle_location[0] < (basket_location[0] + 5):
+            if stim_2.contains(stim_1.pos):
+                print 'Basket!'
+            else:
+                print "missed."
         stim_1.pos = tuple(circle_location)
         stim_1.draw()
+        stim_2.pos = tuple(basket_location)
+        stim_2.draw()
         win.flip()
         trial_surplus = clock.getTime()
         clock.reset()
